@@ -1,0 +1,231 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f5f5f5;
+  --foreground: #171717;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  margin: 0;
+  padding: 0;
+  overscroll-behavior-y: none;
+  scroll-behavior: smooth;
+  /* Performance optimizations */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeSpeed;
+  /* Hide scrollbars globally */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Hide scrollbars globally for all webkit browsers */
+body::-webkit-scrollbar,
+html::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none;
+}
+
+/* Global scrollbar hiding for all elements */
+* {
+  box-sizing: border-box;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Smooth animations globally */
+*,
+*::before,
+*::after {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Optimize animations for performance */
+@media (prefers-reduced-motion: no-preference) {
+  * {
+    transition-duration: 0.15s;
+  }
+  
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .animate-bounce {
+    animation: bounce 1s infinite;
+  }
+  
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+}
+
+/* Smooth typing animation styles */
+.typing-text {
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+/* Smooth cursor animation */
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.typing-cursor {
+  animation: blink 1.2s infinite;
+  animation-timing-function: steps(2, start);
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Prevent scroll chaining across nested scroll containers */
+.overflow-y-auto {
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbars in navigation and other areas */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+}
+
+/* Apply to navigation areas specifically */
+nav, .nav, .navigation, .sidebar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+nav::-webkit-scrollbar, 
+.nav::-webkit-scrollbar, 
+.navigation::-webkit-scrollbar, 
+.sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Optional: section snap to feel like page-by-page while staying single-page */
+main, .page-sections {
+  scroll-snap-type: y proximity; /* or mandatory for full snap */
+}
+section {
+  scroll-snap-align: start;
+}
+
+/* Remove old section-specific min-height constraints since we now stack sections */
+.skills-section > div,
+.experience-section > div {
+  min-height: auto;
+  padding-bottom: 2rem;
+}
+
+/* Projects slider: show 6 cards at once on large screens */
+.projects-track {
+  --card-gap: 1.5rem; /* must match gap-6 */
+}
+.projects-card {
+  flex: 0 0 calc((100% - (5 * var(--card-gap))) / 6);
+  width: calc((100% - (5 * var(--card-gap))) / 6);
+}
+/* Custom cursor with particles - optimized */
+.cursor-none {
+  cursor: none;
+}
+
+.custom-cursor {
+  position: fixed;
+  width: 16px;
+  height: 16px;
+  background: white;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: difference;
+  will-change: transform;
+  transform: translateZ(0); /* Force GPU acceleration */
+  transition: transform 0.1s ease;
+}
+
+.particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: black;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform, opacity;
+  animation: particleFade 1s ease-out forwards;
+}
+
+@keyframes particleFade {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateZ(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.5) translateZ(0);
+  }
+}
+
+/* Mobile-specific fixes */
+@media (max-width: 768px) {
+  body {
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Ensure proper touch scrolling on mobile */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Fix mobile viewport issues */
+  html {
+    height: 100%;
+    width: 100%;
+  }
+  
+  /* Prevent horizontal scroll on mobile */
+  body {
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+  }
+}
+
+/* Ensure Tailwind classes work properly */
+@layer base {
+  html {
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+  }
+}
+
+/* Force CSS to load on mobile */
+@media screen {
+  .force-css-load {
+    content: "CSS Loaded";
+  }
+}
