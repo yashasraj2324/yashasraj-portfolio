@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, lazy, Suspense, memo } from 'react';
 import { Sidebar, Hero, AnimatedBackground, FloatingButtons } from '@/components';
 import { NAVIGATION_ITEMS } from '@/constants';
 
+
 // Lazy load heavy components
 const About = lazy(() => import('@/components/About/About'));
 const Experience = lazy(() => import('@/components/Experience/Experience'));
@@ -12,6 +13,8 @@ const Skills = lazy(() => import('@/components/Skills/Skills'));
 const Certifications = lazy(() => import('@/components/Certifications/Certifications'));
 const Contact = lazy(() => import('@/components/Contact/Contact'));
 const Footer = lazy(() => import('@/components/Footer/Footer'));
+const HangingBoard = lazy(() => import('@/components/HangingBoard/HangingBoard'));
+const ScrollRotatingElements = lazy(() => import('@/components/ScrollRotatingElements/ScrollRotatingElements'));
 
 // Loading component
 const SectionLoader = memo(() => (
@@ -67,7 +70,7 @@ export default function Home() {
     <div className="min-h-screen bg-[#F5F5F5] flex flex-col lg:flex-row relative">
       {/* Animated Neural Network Background */}
       <AnimatedBackground />
-      
+
       {/* Mobile Header */}
       <div className="lg:hidden bg-white shadow-sm px-4 py-3 flex items-center justify-between order-1">
         <div>
@@ -77,7 +80,7 @@ export default function Home() {
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="mobile-menu-button p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-       >
+        >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             {isMobileMenuOpen ? (
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -98,8 +101,11 @@ export default function Home() {
 
       {/* Single-page stacked sections */}
       <div className="flex-1 flex flex-col order-2 lg:order-none relative z-10">
-        <section id="home" className="min-h-screen">
+        <section id="home" className="min-h-screen relative">
           <Hero />
+          <Suspense fallback={null}>
+            <HangingBoard />
+          </Suspense>
         </section>
 
         <Suspense fallback={<SectionLoader />}>
@@ -137,14 +143,19 @@ export default function Home() {
             <Contact />
           </section>
         </Suspense>
-        
+
         <Suspense fallback={<SectionLoader />}>
           <Footer />
         </Suspense>
       </div>
-      
+
       <FloatingButtons />
-      
+
+      {/* Scroll-triggered rotating elements */}
+      <Suspense fallback={null}>
+        <ScrollRotatingElements />
+      </Suspense>
+
       {/* Scroll Indicator */}
       <div className="hidden lg:block fixed right-8 top-1/2 transform -translate-y-1/2 z-40">
         <div className="flex flex-col space-y-3">
@@ -152,11 +163,10 @@ export default function Home() {
             <button
               key={item}
               onClick={() => scrollToSection(item)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                activeSection === item 
-                  ? 'bg-gray-900 scale-125' 
-                  : 'bg-gray-300 hover:bg-gray-500'
-              }`}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${activeSection === item
+                ? 'bg-gray-900 scale-125'
+                : 'bg-gray-300 hover:bg-gray-500'
+                }`}
               title={item}
             />
           ))}

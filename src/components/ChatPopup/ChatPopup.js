@@ -1,21 +1,7 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback, memo } from 'react';
-
-// Memoized message component
-const Message = memo(({ message }) => (
-  <div className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-    <div
-      className={`max-w-xs px-3 py-2 rounded-2xl text-sm ${
-        message.sender === 'user'
-          ? 'bg-black text-white rounded-br-sm'
-          : 'bg-gray-100 text-gray-900 rounded-bl-sm'
-      }`}
-    >
-      {message.text}
-    </div>
-  </div>
-));
+import { useState, useRef, useEffect, memo } from 'react';
+import { chatService } from '@/services/chatService';
 
 // Memoized typing indicator
 const TypingIndicator = memo(() => (
@@ -34,13 +20,14 @@ export default function ChatPopup({ isOpen, onClose }) {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: "Hi! I'm Eleva, Yashas's AI assistant. How can I help you learn more about his work and experience?",
+      text: "Hi! I'm Eleva, Yashas's AI assistant powered by LangChain and OpenAI. How can I help you learn more about his work and experience?",
       sender: 'eleva',
       timestamp: new Date()
     }
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [sessionId] = useState(() => chatService.generateSessionId());
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -52,47 +39,55 @@ export default function ChatPopup({ isOpen, onClose }) {
   }, [messages]);
 
   const handleSendMessage = async () => {
-    if (!inputMessage.trim()) return;
+    if (!inputMessage.trim() || isTyping) return;
 
     const userMessage = {
-      id: messages.length + 1,
-      text: inputMessage,
+      id: Date.now(),
+      text: inputMessage.trim(),
       sender: 'user',
       timestamp: new Date()
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentMessage = inputMessage.trim();
     setInputMessage('');
     setIsTyping(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const responses = [
-        "Yashas is an AI/ML Engineer with expertise in deep learning, NLP, and computer vision. Would you like to know more about his specific projects?",
-        "He has experience with Python, TensorFlow, PyTorch, and various AI frameworks. What particular technology interests you?",
-        "Yashas has worked on projects like Neural Style Transfer, Sentiment Analysis APIs, and Predictive Maintenance systems. Which project would you like to explore?",
-        "His experience includes internships at 1MTB and Surviva Software. Would you like details about his professional journey?",
-        "I can tell you about his technical skills, projects, or experience. What would you like to know more about?",
-        "Yashas specializes in transforming complex data into actionable insights. What aspect of his AI/ML work interests you most?",
-        "He's worked with technologies like scikit-learn, LangChain, OpenAI, and more. Which technology would you like to explore?",
-        "His projects range from computer vision to recommendation systems. What type of AI application are you curious about?"
-      ];
-
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+    try {
+      // Use the chat service to send message
+      const result = await chatService.sendMessage(currentMessage, sessionId);
       
       const elevaMessage = {
-        id: messages.length + 2,
-        text: randomResponse,
+        id: Date.now() + 1,
+        text: result.response,
         sender: 'eleva',
-        timestamp: new Date()
+        timestamp: new Date(),
+        isFallback: result.isFallback,
+        modelUsed: result.modelUsed,
+        attemptNumber: result.attemptNumber
       };
 
       setMessages(prev => [...prev, elevaMessage]);
+      
+    } catch (error) {
+      console.error('Chat error:', error);
+      
+      // Final fallback if service also fails
+      const fallbackMessage = {
+        id: Date.now() + 1,
+        text: "I'm experiencing technical difficulties, but I'm here to help you learn about Yashas's AI/ML expertise! What would you like to know about his projects or experience?",
+        sender: 'eleva',
+        timestamp: new Date(),
+        isFallback: true
+      };
+      
+      setMessages(prev => [...prev, fallbackMessage]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
@@ -166,7 +161,7 @@ export default function ChatPopup({ isOpen, onClose }) {
             type="text"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyDown}
             placeholder="Ask about Yashas..."
             className="flex-1 px-3 py-2 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
           />

@@ -180,7 +180,7 @@ export default function Hero() {
           <div className="flex-shrink-0 order-1 lg:order-2 flex items-center justify-center">
             <div className="w-64 h-64 lg:w-[380px] lg:h-[380px] rounded-full overflow-hidden bg-gray-200 border-4 border-white shadow-lg">
               <img
-                src="/profile-placeholder.svg"
+                src="/profile-placeholder.png"
                 alt="Yashas Profile"
                 className="w-full h-full object-cover grayscale"
               />

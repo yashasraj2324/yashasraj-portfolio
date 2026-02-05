@@ -118,11 +118,32 @@ export default function Projects() {
 
   // Use projects as-is without duplication
   const data = projects;
-  // Chunk into pages of 6 (3 columns x 2 rows)
-  const pages = [];
-  for (let i = 0; i < data.length; i += 6) {
-    pages.push(data.slice(i, i + 6));
-  }
+  
+  // State to track screen size - initialize with a default value
+  const [isMobile, setIsMobile] = useState(false);
+  const [pages, setPages] = useState([]);
+  
+  // Check screen size and update pages
+  useEffect(() => {
+    const checkScreenSize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      
+      // Chunk into pages based on screen size
+      // Mobile: 2 projects per page, Desktop: 6 projects per page (3 columns x 2 rows)
+      const projectsPerPage = mobile ? 2 : 6;
+      const newPages = [];
+      for (let i = 0; i < data.length; i += projectsPerPage) {
+        newPages.push(data.slice(i, i + projectsPerPage));
+      }
+      setPages(newPages);
+    };
+    
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, [data.length]);
 
   const computeOffsets = useCallback(() => {
     const el = trackRef.current;
@@ -152,7 +173,7 @@ export default function Projects() {
       ro.disconnect();
       window.removeEventListener('resize', debouncedComputeOffsets);
     };
-  }, [data.length, computeOffsets]);
+  }, [pages.length, computeOffsets]);
 
   const handleScroll = useCallback(() => {
     if (scrollRaf.current) return;
@@ -244,7 +265,11 @@ export default function Projects() {
           >
             {pages.map((page, pageIndex) => (
               <div key={pageIndex} className="snap-start shrink-0 w-full">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 grid-rows-2 gap-6">
+                <div className={`grid gap-6 ${
+                  isMobile 
+                    ? 'grid-cols-1 grid-rows-2' 
+                    : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 grid-rows-2'
+                }`}>
                   {page.map((project, index) => (
                     <ProjectCard 
                       key={`${pageIndex}-${index}`} 

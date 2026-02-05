@@ -7,41 +7,18 @@ const Certifications = () => {
 
   const certifications = [
     {
-      title: "AWS Certified Solutions Architect",
-      issuer: "Amazon Web Services",
-      date: "2024",
-      credentialId: "AWS-SAA-2024-001",
-      image: "/api/placeholder/100/100",
-      skills: ["Cloud Architecture", "AWS Services", "Security"],
-      status: "Active"
+      title: " Certified AI Foundations Associate",
+      issuer:"Oracle Cloud",
+      date: "2025",
+      credentialId:"",
+      image: "yashas\public\OCI25AICFA.png",
+      skills: ["machine learning", "LLMs", "deep learning"],
+      status: "Active",
+      verificationlink:"https://catalog-education.oracle.com/pls/certview/sharebadge?id=F520DE1A29A0B6C15181B3DA1771668DAA1C5731D96F54A051D7811ECB3A26E6"
     },
-    {
-      title: "Google Cloud Professional ML Engineer",
-      issuer: "Google Cloud",
-      date: "2023",
-      credentialId: "GCP-MLE-2023-002",
-      image: "/api/placeholder/100/100",
-      skills: ["Machine Learning", "TensorFlow", "MLOps"],
-      status: "Active"
-    },
-    {
-      title: "Microsoft Azure AI Engineer Associate",
-      issuer: "Microsoft",
-      date: "2023",
-      credentialId: "AZ-AI-102-2023",
-      image: "/api/placeholder/100/100",
-      skills: ["Azure AI", "Cognitive Services", "Bot Framework"],
-      status: "Active"
-    },
-    {
-      title: "Certified Kubernetes Administrator",
-      issuer: "Cloud Native Computing Foundation",
-      date: "2024",
-      credentialId: "CKA-2024-003",
-      image: "/api/placeholder/100/100",
-      skills: ["Kubernetes", "Container Orchestration", "DevOps"],
-      status: "Active"
-    }
+   
+  
+   
   ];
 
   const achievements = [
@@ -95,6 +72,12 @@ const Certifications = () => {
       'Research': 'bg-orange-100 text-orange-800'
     };
     return colors[category] || 'bg-gray-100 text-gray-800';
+  };
+
+  const handleVerifyCertification = (verificationLink) => {
+    if (verificationLink) {
+      window.open(verificationLink, '_blank', 'noopener,noreferrer');
+    }
   };
 
   return (
@@ -177,7 +160,20 @@ const Certifications = () => {
                     ))}
                   </div>
                   
-                  <p className="text-xs text-gray-400">ID: {cert.credentialId}</p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs text-gray-400">ID: {cert.credentialId}</p>
+                    {cert.verificationlink && (
+                      <button
+                        onClick={() => handleVerifyCertification(cert.verificationlink)}
+                        className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-md transition-colors duration-200 flex items-center gap-1"
+                      >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Verify
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}

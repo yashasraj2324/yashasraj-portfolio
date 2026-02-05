@@ -48,7 +48,7 @@ export default function Sidebar({
         <div className="mb-12 flex items-center">
           {/* Small Profile Picture */}
           <img
-            src="/profile-placeholder.svg"
+            src="/profile-placeholder.png"
             alt="Yashas Profile"
             className="w-12 h-12 rounded-full border-2 border-gray-200 object-cover mr-3"
           />
